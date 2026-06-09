@@ -1,4 +1,3 @@
-```yaml
 name: CI/CD Pipeline
 
 on:
@@ -98,4 +97,3 @@ jobs:
         run: |
           kubectl get pods
           kubectl describe pod nodeapp-pod
-```
