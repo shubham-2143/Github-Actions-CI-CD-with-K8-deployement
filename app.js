@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.send('Hello from Kubernetes CI/CD Project');
+  res.send('Hello from Kubernetes Github Project');
 });
 
 app.listen(3000, () => {
