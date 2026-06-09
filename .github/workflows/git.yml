@@ -67,7 +67,7 @@ jobs:
 
     - name: Verify Deployment
       run: |
-        kubectl rollout status deployment/hello-world-app
+        kubectl rollout status deployment/nodeapp
         kubectl get pods
 
 
