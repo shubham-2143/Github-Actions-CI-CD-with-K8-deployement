@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: my-new-app
-        image: 654654410356.dkr.ecr.us-east-1.amazonaws.com/nodeapp:latest
+        image: 654654410356.dkr.ecr.us-east-1.amazonaws.com/nodeapp:v2
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
-
