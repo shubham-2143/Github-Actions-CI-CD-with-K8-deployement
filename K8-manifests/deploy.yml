@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: my-new-app
-    image: 654654410356.dkr.ecr.us-east-1.amazonaws.com/nodeapp:v2
+    image: 654654410356.dkr.ecr.us-east-1.amazonaws.com/nodeapp
     imagePullPolicy: Always
     ports:
     - containerPort: 3000
