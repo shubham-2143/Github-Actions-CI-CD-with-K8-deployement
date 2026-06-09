@@ -1,1 +1,75 @@
+name: Github-Actions-CI-CD-with-K8-deployement
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: K8
+  ECR_REPOSITORY: nodepp
+
+jobs:
+  build-test-push-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Run Unit Test
+      run: npm test
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build Docker Image
+      run: |
+        docker build -t $ECR_REPOSITORY:${{ github.sha }} .
+        docker tag $ECR_REPOSITORY:${{ github.sha }} \
+        ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+
+    - name: Push Docker Image to ECR
+      run: |
+        docker push \
+        ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
+
+    - name: Configure kubeconfig
+      run: |
+        aws eks update-kubeconfig \
+        --region $AWS_REGION \
+        --name $EKS_CLUSTER_NAME
+
+    - name: Update Deployment Image
+      run: |
+        kubectl set image deployment/nodeapp \
+        nodeapp=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+
+    - name: Verify Deployment
+      run: |
+        kubectl rollout status deployment/hello-world-app
+        kubectl get pods
+
+
+    
 
