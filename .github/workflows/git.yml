@@ -87,6 +87,7 @@ jobs:
       - name: Deploy Pod
         run: |
           kubectl apply -f K8-manifests/pod.yml
+          kubectl apply -f K8-manifests/service.yml
 
       - name: Verify Pod
         run: |
