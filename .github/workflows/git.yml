@@ -74,11 +74,6 @@ jobs:
         run: |
           sed -i "s|image:.*|image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}|g" K8-manifests/pod.yml
 
-      - name: Debug AWS Identity
-        run: |
-          aws sts get-caller-identity
-          aws eks list-clusters
-
       - name: Verify Cluster Access
         run: |
           kubectl config current-context
