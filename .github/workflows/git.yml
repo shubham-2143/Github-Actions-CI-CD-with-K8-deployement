@@ -74,15 +74,32 @@ jobs:
       run: |
         sed -i "s|image:.*|image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}|g" K8-manifests/pod.yml
 
-    - name: Delete Existing Pod
+    - name: Debug AWS Identity
       run: |
-        kubectl delete pod nodeapp-pod --ignore-not-found=true
+       aws sts get-caller-identity
+       aws eks list-clusters
 
-    - name: Deploy Pod
+    - name: Configure kubeconfig
       run: |
-        kubectl apply -f K8-manifests/pod.yml
+        aws eks update-kubeconfig \
+        --region $AWS_REGION \
+        --name $EKS_CLUSTER_NAME
 
-    - name: Verify Pod
+    - name: Verify Cluster Access
       run: |
+        kubectl config current-context
+        kubectl get nodes
         kubectl get pods
-        kubectl describe pod nodeapp-pod
+    
+        - name: Delete Existing Pod
+          run: |
+            kubectl delete pod nodeapp-pod --ignore-not-found=true
+    
+        - name: Deploy Pod
+          run: |
+            kubectl apply -f K8-manifests/pod.yml
+    
+        - name: Verify Pod
+          run: |
+            kubectl get pods
+            kubectl describe pod nodeapp-pod
