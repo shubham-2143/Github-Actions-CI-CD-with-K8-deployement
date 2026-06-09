@@ -1,4 +1,4 @@
-name: Github-Actions-CI-CD-with-K8-deployement
+name: CI/CD Pipeline
 
 on:
   push:
@@ -28,6 +28,16 @@ jobs:
 
     - name: Run Unit Test
       run: npm test
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nodeapp-build-files
+        path: |
+          app.js
+          package.json
+          Dockerfile
+          K8-manifests/
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -60,16 +70,19 @@ jobs:
         --region $AWS_REGION \
         --name $EKS_CLUSTER_NAME
 
-    - name: Update Deployment Image
+    - name: Update pod.yml with latest image
       run: |
-        kubectl set image deployment/nodeapp \
-        my-new-app=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+        sed -i "s|image:.*|image: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}|g" K8-manifests/pod.yml
 
-    - name: Verify Deployment
+    - name: Delete Existing Pod
       run: |
-        kubectl rollout status deployment/nodeapp
+        kubectl delete pod nodeapp-pod --ignore-not-found=true
+
+    - name: Deploy Pod
+      run: |
+        kubectl apply -f K8-manifests/pod.yml
+
+    - name: Verify Pod
+      run: |
         kubectl get pods
-
-
-    
-
+        kubectl describe pod nodeapp-pod
