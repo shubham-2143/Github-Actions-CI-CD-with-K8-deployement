@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: us-east-1
   EKS_CLUSTER_NAME: K8
-  ECR_REPOSITORY: nodepp
+  ECR_REPOSITORY: nodeapp
 
 jobs:
   build-test-push-deploy:
