@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER_NAME: K8
+  EKS_CLUSTER_NAME: k8
   ECR_REPOSITORY: nodeapp
 
 jobs:
