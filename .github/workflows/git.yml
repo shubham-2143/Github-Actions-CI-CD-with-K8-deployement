@@ -51,13 +51,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
 
-      - name: Run Snyk Code (SAST)
+      - name: Snyk Open Source Scan
         uses: snyk/actions/node@master
-        continue-on-error: true
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: code test   
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
