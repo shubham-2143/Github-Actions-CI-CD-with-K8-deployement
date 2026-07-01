@@ -52,9 +52,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
 
       - name: Run Semgrep SAST Scan
-        uses: semgrep/semgrep-action@v1
+        uses: semgrep/semgrep-action@v1.14.0
         env:
-         SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}   
+         SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}EN }}   
 
       - name: Snyk Open Source Scan
         uses: snyk/actions/node@master
