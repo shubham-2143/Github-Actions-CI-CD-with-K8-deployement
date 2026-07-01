@@ -54,7 +54,14 @@ jobs:
       - name: Snyk Open Source Scan
         uses: snyk/actions/node@master
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}   
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }} 
+
+      - name: Monitor Project in Snyk
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+         command: monitor   
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
