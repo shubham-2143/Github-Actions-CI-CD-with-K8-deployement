@@ -51,10 +51,25 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
 
-      - name: Run Semgrep SAST Scan
-        uses: semgrep/semgrep-action@v1.14.0
-        env:
-         SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}EN }}   
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Semgrep
+        run: |
+          python -m pip install --upgrade pip
+            pip install semgrep
+        
+      - name: Verify Semgrep
+        run: semgrep --version
+        
+      - name: Run Semgrep Scan
+        run: |
+            semgrep scan \
+              --config p/security-audit \
+              --sarif \
+              --output semgrep.sarif
 
       - name: Snyk Open Source Scan
         uses: snyk/actions/node@master
