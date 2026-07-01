@@ -29,6 +29,16 @@ jobs:
       - name: Run Unit Test
         run: npm test
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodeapp-build-files
+          path: |
+            app.js
+            package.json
+            Dockerfile
+            K8-manifests/  
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
@@ -41,15 +51,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Run Snyk Code (SAST)
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          name: nodeapp-build-files
-          path: |
-            app.js
-            package.json
-            Dockerfile
-            K8-manifests/
+          command: code test   
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
